@@ -10,24 +10,22 @@
 
 ## Problema
 
-**Problema abordado:** [Descreva claramente o problema que o projeto pretende resolver.]
+**Problema abordado:** em desenvolvimento...
 
-**Público-alvo:** [Quem será beneficiado pelo projeto?]
+**Público-alvo:** em desenvolvimento...
 
-**Objetivo:** [O que o sistema deverá fazer e qual resultado pretende alcançar?]
-
-**Escopo:** [Explique o que faz parte e o que não faz parte da solução.]
+**Objetivo:** em desenvolvimento...
 
 ## Tecnologias
 
-- Linguagem: Python [versão utilizada]
-- Visão computacional: [biblioteca/modelo]
-- Processamento de linguagem natural (PLN): [biblioteca/modelo]
-- Machine Learning: [biblioteca/modelo]
-- Tomada de decisão: [método/algoritmo]
-- Ferramentas de desenvolvimento: Git, GitHub e [outras]
+- Linguagem: Python 3.13.5
+- Visão computacional: ...
+- Processamento de linguagem natural (PLN): ...
+- Machine Learning: ...
+- Tomada de decisão: ...
+- Ferramentas de desenvolvimento: Git, GitHub
 
-As dependências iniciais estão em [`requirements.txt`](requirements.txt). Atualize esse arquivo quando adicionar, remover ou alterar bibliotecas.
+As dependências iniciais estão em [`requirements.txt`](requirements.txt).
 
 ## Arquitetura
 
@@ -40,10 +38,6 @@ src/
 ├── machine_learning/     # Treinamento, avaliação e inferência dos modelos
 └── decisao/              # Regras ou modelos que produzem a decisão final
 ```
-
-**Fluxo principal:** [Descreva a entrada, as etapas de processamento, a interação entre os módulos e a saída.]
-
-Inclua aqui um diagrama da arquitetura quando o fluxo estiver definido. O diagrama pode ser salvo em `resultados/` ou `artigo/`.
 
 ## Estrutura do repositório
 
@@ -71,7 +65,7 @@ Inclua aqui um diagrama da arquitetura quando o fluxo estiver definido. O diagra
 
 ### Pré-requisitos
 
-- Python [versão definida pelo grupo]
+- Python 3.13.5
 - Git
 - pip
 
@@ -80,8 +74,8 @@ Inclua aqui um diagrama da arquitetura quando o fluxo estiver definido. O diagra
 Clone o repositório e entre na pasta:
 
 ```bash
-git clone https://github.com/SEU-GRUPO/NOME-DO-REPOSITORIO.git
-cd NOME-DO-REPOSITORIO
+git clone https://github.com/edvaldo-f/EcoTriagem.git
+cd EcoTriagem
 ```
 
 Crie e ative um ambiente virtual.
