@@ -1,67 +1,112 @@
 """Reconhecimento da intenção da pergunta do usuário.
 
-Responsável: PLN (Andrey).
+Classificador treinado (TF-IDF + modelo linear) sobre o dataset de frases em
+`dados/pln/intencoes.csv`. Treino e comparação de modelos em
+`src.pln.treinar`; avaliação em `src.pln.avaliar`.
 
-Enquanto não existir um modelo treinado em CAMINHO_MODELO, a função
-interpretar_pergunta usa casamento de palavras-chave (stub). Isso NÃO conta
-como PLN para o enunciado; deve virar um classificador treinado (ex.:
-TF-IDF + Regressão Logística) com dataset e métricas próprias. Para ligar
-o modelo real:
-  1. salvar o modelo treinado em CAMINHO_MODELO;
-  2. implementar o carregamento em carregar_modelo();
-  3. implementar a inferência no fim de interpretar_pergunta().
-Manter a assinatura e o tipo de retorno (ResultadoPLN).
+O modelo é carregado **uma única vez**, na primeira chamada, e fica em cache
+no módulo — carregar o arquivo a cada pergunta custaria mais que a própria
+classificação.
+
+Enquanto `modelos/pln_intencoes.joblib` não existir (quem clona o repositório
+não recebe a pasta `modelos/`), o módulo cai no baseline de palavras-chave e
+avisa uma vez no console, em vez de quebrar o sistema. Use
+`modelo_carregado()` para a interface mostrar esse estado ao usuário.
 """
 
-import unicodedata
-from functools import cache
-
-from src.configuracao import PASTA_MODELOS
+from src.configuracao import LIMIAR_CONFIANCA_PLN
 from src.integracao.contratos import ResultadoPLN
+from src.pln import baseline
+from src.pln.modelos import ARQUIVO_MODELO, ClassificadorIntencoes, carregar
 
-CAMINHO_MODELO = PASTA_MODELOS / "pln_intencoes.joblib"
+_classificador: ClassificadorIntencoes | None = None
+_tentou_carregar = False
 
-# Stub: a ordem importa, a primeira intenção com palavra encontrada vence.
-_PALAVRAS_CHAVE = {
-    "ponto_coleta": ("ecoponto", "ponto de coleta", "onde entrego", "mais perto", "mais proximo"),
-    "cor_lixeira": ("cor", "lixeira"),
-    "como_preparar": ("lavar", "limpar", "preparar", "amassar", "antes de"),
-    "e_reciclavel": ("reciclavel", "recicla"),
-    "como_descartar": ("descart", "jogo", "jogar", "onde coloco", "onde ponho"),
-    "identificar": ("o que e", "que material", "qual material", "identific"),
-}
+MENSAGEM_SEM_MODELO = (
+    "O modelo de PLN ainda não foi treinado: as intenções estão sendo "
+    "reconhecidas pelo baseline de palavras-chave, que erra mais. "
+    "Treine com: python -m src.pln.treinar"
+)
 
 
-@cache
-def carregar_modelo():
-    """Carrega o modelo uma única vez. Devolve None enquanto ele não existir."""
-    if not CAMINHO_MODELO.exists():
-        return None
-    # TODO(Andrey): carregar e devolver o modelo (ex.: joblib.load).
-    return None
+def _obter_classificador() -> ClassificadorIntencoes | None:
+    """Carrega o modelo na primeira chamada e reaproveita nas seguintes."""
+    global _classificador, _tentou_carregar
+    if not _tentou_carregar:
+        _tentou_carregar = True
+        try:
+            _classificador = carregar()
+        except FileNotFoundError:
+            print(f"[pln] {MENSAGEM_SEM_MODELO}")
+    return _classificador
+
+
+def recarregar() -> None:
+    """Esquece o modelo em cache (usado depois de um novo treino e nos testes)."""
+    global _classificador, _tentou_carregar
+    _classificador = None
+    _tentou_carregar = False
+
+
+def modelo_carregado() -> bool:
+    """True se o classificador treinado está em uso; False se é o baseline."""
+    return _obter_classificador() is not None
+
+
+# Interface comum aos módulos com modelo, usada por src.integracao.pipeline.carregar_modelos().
+def carregar_modelo() -> ClassificadorIntencoes | None:
+    """Carrega o modelo (uma única vez) e o devolve; None enquanto ele não existir."""
+    return _obter_classificador()
 
 
 def usando_stub() -> bool:
-    return carregar_modelo() is None
+    return not modelo_carregado()
 
 
-def _normalizar(texto: str) -> str:
-    sem_acentos = unicodedata.normalize("NFKD", texto).encode("ascii", "ignore").decode()
-    return sem_acentos.lower().strip()
-
-
-def _interpretar_por_palavras_chave(texto: str) -> ResultadoPLN:
-    normalizado = _normalizar(texto)
-    for intencao, palavras in _PALAVRAS_CHAVE.items():
-        if any(p in normalizado for p in palavras):
-            return ResultadoPLN(intencao=intencao, confianca=0.9, texto_original=texto)
-    return ResultadoPLN(intencao="fora_do_escopo", confianca=0.0, texto_original=texto)
+def descricao_do_modelo() -> str:
+    """Texto curto sobre o que está respondendo, para a interface exibir."""
+    classificador = _obter_classificador()
+    if classificador is None:
+        return "baseline de palavras-chave (modelo não treinado)"
+    return f"{classificador.nome} — {classificador.descricao}"
 
 
 def interpretar_pergunta(texto: str) -> ResultadoPLN:
-    """Recebe a pergunta em linguagem natural e devolve a intenção reconhecida."""
-    modelo = carregar_modelo()
-    if modelo is None:
-        return _interpretar_por_palavras_chave(texto)
-    # TODO(Andrey): rodar o modelo e montar ResultadoPLN com a intenção e a confiança.
-    raise NotImplementedError("inferência do modelo de PLN ainda não implementada")
+    """Recebe a pergunta em linguagem natural e devolve a intenção reconhecida.
+
+    A confiança é a probabilidade da intenção prevista. O módulo de decisão
+    compara essa confiança com `LIMIAR_CONFIANCA_PLN` para decidir entre
+    responder e pedir uma reformulação; aqui a intenção é devolvida como está,
+    sem aplicar o limiar, para que a interface possa mostrar o número real.
+    """
+    classificador = _obter_classificador()
+    if classificador is None:
+        intencao, confianca = baseline.classificar(texto)
+    else:
+        intencao, confianca = classificador.classificar(texto)
+    return ResultadoPLN(intencao=intencao, confianca=confianca, texto_original=texto)
+
+
+def aceita(resultado: ResultadoPLN) -> bool:
+    """Se a intenção passa o limiar de confiança do sistema.
+
+    Conveniência para a interface e para a avaliação; a decisão final continua
+    sendo do módulo de decisão.
+    """
+    return (
+        resultado.intencao != "fora_do_escopo"
+        and resultado.confianca >= LIMIAR_CONFIANCA_PLN
+    )
+
+
+__all__ = [
+    "ARQUIVO_MODELO",
+    "MENSAGEM_SEM_MODELO",
+    "aceita",
+    "carregar_modelo",
+    "descricao_do_modelo",
+    "interpretar_pergunta",
+    "modelo_carregado",
+    "recarregar",
+    "usando_stub",
+]

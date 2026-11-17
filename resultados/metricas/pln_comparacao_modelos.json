@@ -1,0 +1,67 @@
+{
+  "gerado_em": "2026-11-17",
+  "seed": 42,
+  "partes_validacao_cruzada": 5,
+  "frases_treino": 319,
+  "frases_teste": 80,
+  "origem_do_teste": "divisão estratificada 80%/20% (seed 42)",
+  "modelo_escolhido": "tfidf_palavras_caracteres_lr",
+  "modelos": [
+    {
+      "modelo": "tfidf_palavras_caracteres_lr",
+      "descricao": "TF-IDF de palavras + caracteres e Regressão Logística",
+      "f1_macro": 0.9002740389494038,
+      "f1_macro_desvio": 0.02198654399210971,
+      "acuracia": 0.8995535714285714,
+      "tipo": "candidato"
+    },
+    {
+      "modelo": "tfidf_palavras_caracteres_svc",
+      "descricao": "TF-IDF de palavras + caracteres e LinearSVC calibrado",
+      "f1_macro": 0.8970826988308673,
+      "f1_macro_desvio": 0.03294687948146973,
+      "acuracia": 0.8964781746031747,
+      "tipo": "candidato"
+    },
+    {
+      "modelo": "tfidf_caracteres_lr",
+      "descricao": "TF-IDF de caracteres (3-5) + Regressão Logística",
+      "f1_macro": 0.890455340030749,
+      "f1_macro_desvio": 0.02909956091701544,
+      "acuracia": 0.8901289682539681,
+      "tipo": "candidato"
+    },
+    {
+      "modelo": "tfidf_palavras_lr",
+      "descricao": "TF-IDF de palavras (1-2) + Regressão Logística",
+      "f1_macro": 0.8408620891615142,
+      "f1_macro_desvio": 0.03646334109561727,
+      "acuracia": 0.8433035714285714,
+      "tipo": "candidato"
+    },
+    {
+      "modelo": "ablacao_sem_negacoes",
+      "descricao": "Ablação: TF-IDF de palavras sem stopwords e sem negações",
+      "f1_macro": 0.8099675064533823,
+      "f1_macro_desvio": 0.06342625896063503,
+      "acuracia": 0.811954365079365,
+      "tipo": "ablacao"
+    },
+    {
+      "modelo": "ablacao_sem_stopwords",
+      "descricao": "Ablação: TF-IDF de palavras sem stopwords (negações preservadas)",
+      "f1_macro": 0.8097842625018942,
+      "f1_macro_desvio": 0.05726999827249442,
+      "acuracia": 0.811954365079365,
+      "tipo": "ablacao"
+    },
+    {
+      "modelo": "baseline_palavras_chave",
+      "descricao": "Baseline: casamento de palavras-chave (versão anterior do stub)",
+      "f1_macro": 0.6729045193847505,
+      "f1_macro_desvio": 0.03918101763539732,
+      "acuracia": 0.667906746031746,
+      "tipo": "baseline"
+    }
+  ]
+}

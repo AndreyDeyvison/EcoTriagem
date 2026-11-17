@@ -1,5 +1,6 @@
 gradio>=6.0,<7
 pillow>=11
 scikit-learn>=1.5
+joblib>=1.4
 matplotlib>=3.9
 pytest>=8

@@ -103,6 +103,19 @@ python -m pip install -r requirements.txt
 
 ## Execução
 
+### PLN — classificador de intenções
+
+```bash
+python -m src.pln.treinar    # compara os modelos e salva o melhor em modelos/
+python -m src.pln.avaliar    # gera métricas, gráficos e exemplos em resultados/
+```
+
+O modelo treinado não vai para o repositório: rode `src.pln.treinar` uma vez
+depois de clonar. Antes disso o sistema funciona com um baseline de
+palavras-chave e avisa no console. Detalhes em [`src/pln/README.md`](src/pln/README.md).
+
+### Demais módulos
+
 em desenvolvimento...
 
 ## Modelos e métodos
@@ -111,7 +124,10 @@ em desenvolvimento...
 
 ## Testes
 
-em desenvolvimento...
+```bash
+pytest
+```
+
 
 ## Resultados
 
