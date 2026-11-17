@@ -58,7 +58,9 @@ def _tabela_etapas(visao: ResultadoVisao, resultado: ResultadoPipeline | None = 
     ]
     if resultado is not None:
         decisao = resultado.decisao
-        saida_decisao = f"`{decisao.acao}`" + (f" → lixeira {decisao.lixeira}" if decisao.lixeira else "")
+        saida_decisao = f"`{decisao.acao}` pela regra **{decisao.regra}**" + (
+            f" → lixeira {decisao.lixeira}" if decisao.lixeira else ""
+        )
         linhas += [
             f"| 2. PLN (intenção) | `{resultado.pln.intencao}` | {resultado.pln.confianca:.0%} |",
             f"| 3. Decisão | {saida_decisao} | — |",

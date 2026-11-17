@@ -57,7 +57,8 @@ class Decisao:
 
     resposta: str             # texto mostrado ao usuário
     acao: str                 # uma de ACOES
-    lixeira: str | None = None  # ex.: "vermelha (plástico)"; None quando não se aplica
+    lixeira: str | None = None  # "<cor> (<material>)", ex.: "vermelha (plástico)"; None quando não se aplica
+    regra: str = ""           # regra que gerou a decisão (ex.: "R2"; ver src/decisao/REGRAS.md)
 
     def __post_init__(self) -> None:
         if self.acao not in ACOES:

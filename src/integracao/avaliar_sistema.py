@@ -127,6 +127,7 @@ def avaliar() -> tuple[dict, dict[str, list]]:
     desfechos = Counter()
     por_classe = defaultdict(Counter)
     por_intencao = defaultdict(Counter)
+    por_regra = defaultdict(Counter)
     tempos_visao, tempos_decisao = [], []
     acertos_visao = 0
     exemplos: dict[str, list] = defaultdict(list)
@@ -151,6 +152,7 @@ def avaliar() -> tuple[dict, dict[str, list]]:
             desfechos[desfecho] += 1
             por_classe[classe_real][desfecho] += 1
             por_intencao[intencao_esperada][desfecho] += 1
+            por_regra[decisao.regra][desfecho] += 1
 
             # Guarda poucos exemplos de cada desfecho, de imagens diferentes.
             guardados = exemplos[desfecho]
@@ -175,6 +177,15 @@ def avaliar() -> tuple[dict, dict[str, list]]:
         },
         "acerto_por_intencao_pct": {
             i: _porcentagem(cont["correto"], sum(cont.values())) for i, cont in sorted(por_intencao.items())
+        },
+        # Quantas vezes cada regra da decisão foi aplicada e quanto ela acertou.
+        "regras": {
+            r: {
+                "n": sum(cont.values()),
+                "pct": _porcentagem(sum(cont.values()), total),
+                "acerto_pct": _porcentagem(cont["correto"], sum(cont.values())),
+            }
+            for r, cont in sorted(por_regra.items())
         },
         "tempo": {
             "visao_por_imagem": _resumo_tempos(tempos_visao),
@@ -265,6 +276,9 @@ def imprimir_resumo(metricas: dict) -> None:
     print("\nAcerto por intenção esperada:")
     for intencao, pct in metricas["acerto_por_intencao_pct"].items():
         print(f"  {intencao:<16} {pct:.1f}%")
+    print("\nRegras da decisão (aplicações / acerto quando aplicada):")
+    for regra, r in metricas["regras"].items():
+        print(f"  {regra}  {r['n']:>6} ({r['pct']:.1f}%)  acerto {r['acerto_pct']:.1f}%")
     print("\nTempo por etapa (média / p95):")
     for etapa, t in metricas["tempo"].items():
         print(f"  {etapa:<18} {t['media_ms']:.2f} ms / {t['p95_ms']:.2f} ms")

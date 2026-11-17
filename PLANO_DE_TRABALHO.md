@@ -155,11 +155,14 @@ def decidir(visao: ResultadoVisao, pln: ResultadoPLN) -> Decisao
 
 ### Tarefas
 
-1. **Documentar o sistema de regras** como tabela (condição → ação) para o artigo, e
+1. ✅ **Documentar o sistema de regras** como tabela (condição → ação) para o artigo, e
    enquadrar teoricamente: agente reativo baseado em regras que percebe (visão + PLN) e age (resposta).
-2. **Heurísticas para confiança intermediária**, usando o `top3`. Exemplo: se a confiança está
+   *Feito:* regras R1–R4 explícitas em `regras.py`, documentadas em `src/decisao/REGRAS.md`;
+   cada `Decisao` informa a regra aplicada (aparece na interface e na avaliação). Revisar o texto.
+2. ✅ **Heurísticas para confiança intermediária**, usando o `top3`. Exemplo: se a confiança está
    abaixo de 0,6 mas as duas classes mais prováveis vão para a **mesma lixeira** (papel e papelão →
    azul), dá para responder mesmo assim. Isso reduz pedidos de nova foto sem errar a lixeira.
+   *Feito:* regra R3, com P(lixeira) = soma das probabilidades dos materiais da mesma lixeira.
 3. **Casos especiais:** papel engordurado, vidro quebrado, embalagens multicamada (tipo longa vida),
    resíduos que o modelo não conhece (pilhas, eletrônicos) — em parceria com o Andrey, se ele
    implementar a extração do objeto citado.
