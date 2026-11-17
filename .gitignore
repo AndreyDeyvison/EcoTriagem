@@ -30,3 +30,7 @@ modelos/*
 .idea/
 .DS_Store
 Thumbs.db
+
+# Interações gravadas pela interface (python app.py --registrar): podem conter
+# fotos pessoais da webcam; revisar e copiar manualmente o que for publicável.
+resultados/exemplos/interface/

@@ -1,11 +1,15 @@
 """Interface web do EcoTriagem (Gradio).
 
-Executar a partir da raiz do repositório:  python app.py
+Executar a partir da raiz do repositório:
+    python app.py               # interface normal
+    python app.py --registrar   # também salva cada pergunta/resposta em resultados/exemplos/interface/
 
 Fluxo: o usuário envia uma foto -> a Visão analisa uma única vez -> o
 usuário conversa sobre ela -> cada pergunta passa pelo PLN e pela Decisão,
 reaproveitando a análise da foto.
 """
+
+import argparse
 
 import gradio as gr
 
@@ -13,8 +17,12 @@ from src.configuracao import LIMIAR_CONFIANCA_VISAO, RAIZ
 from src.decisao.regras import NOMES
 from src.integracao.contratos import ResultadoPipeline, ResultadoVisao
 from src.integracao.pipeline import analisar_imagem, carregar_modelos, responder_pergunta
+from src.integracao.registro import salvar_exemplo
 
 STATUS_MODELOS = carregar_modelos()
+
+PASTA_REGISTRO = RAIZ / "resultados" / "exemplos" / "interface"
+registrar_interacoes = False  # ligado por --registrar
 
 EXEMPLOS_IMAGEM = sorted(str(p) for p in (RAIZ / "dados" / "exemplos").glob("*.jpg"))
 EXEMPLOS_PERGUNTA = [
@@ -76,7 +84,7 @@ def ao_receber_imagem(imagem):
     return visao, conversa, _probabilidades(visao), _tabela_etapas(visao)
 
 
-def ao_perguntar(pergunta, conversa, visao):
+def ao_perguntar(pergunta, conversa, visao, imagem=None):
     """Responde a uma pergunta sobre a foto já analisada."""
     pergunta = (pergunta or "").strip()
     if not pergunta:
@@ -89,6 +97,8 @@ def ao_perguntar(pergunta, conversa, visao):
 
     resultado = responder_pergunta(visao, pergunta)
     conversa.append({"role": "assistant", "content": resultado.decisao.resposta})
+    if registrar_interacoes and imagem is not None:
+        salvar_exemplo(PASTA_REGISTRO, imagem, resultado)
     return "", conversa, _tabela_etapas(visao, resultado)
 
 
@@ -132,8 +142,21 @@ with gr.Blocks(title="EcoTriagem") as demo:
 
     imagem.change(ao_receber_imagem, inputs=imagem, outputs=[visao_atual, conversa, material, etapas])
     for evento in (enviar.click, pergunta.submit):
-        evento(ao_perguntar, inputs=[pergunta, conversa, visao_atual], outputs=[pergunta, conversa, etapas])
+        evento(
+            ao_perguntar,
+            inputs=[pergunta, conversa, visao_atual, imagem],
+            outputs=[pergunta, conversa, etapas],
+        )
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Interface web do EcoTriagem")
+    parser.add_argument(
+        "--registrar",
+        action="store_true",
+        help=f"salva cada pergunta e resposta em {PASTA_REGISTRO.relative_to(RAIZ)}/",
+    )
+    registrar_interacoes = parser.parse_args().registrar
+    if registrar_interacoes:
+        print(f"Registrando interações em {PASTA_REGISTRO.relative_to(RAIZ)}/")
     demo.launch(theme=gr.themes.Soft(primary_hue="green"))

@@ -34,3 +34,13 @@ def test_conversa_acumula_perguntas_e_respostas():
 def test_pergunta_vazia_e_ignorada():
     _, conversa, _ = app.ao_perguntar("   ", [], None)
     assert conversa == []
+
+
+def test_registrar_salva_cada_pergunta(tmp_path, monkeypatch):
+    monkeypatch.setattr(app, "registrar_interacoes", True)
+    monkeypatch.setattr(app, "PASTA_REGISTRO", tmp_path)
+    foto = Image.new("RGB", (64, 64))
+    visao, conversa, _, _ = app.ao_receber_imagem(foto)
+    app.ao_perguntar("isso é reciclável?", conversa, visao, foto)
+    assert (tmp_path / "exemplo_001.jpg").exists()
+    assert (tmp_path / "exemplos.jsonl").exists()
