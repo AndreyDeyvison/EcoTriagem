@@ -9,3 +9,24 @@ __pycache__/
 # Arquivos de ambiente
 .env
 .env.*
+
+# Python (extras)
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Datasets e modelos treinados (grandes; obter via script/instruções do README)
+dados/brutos/*
+dados/processados/*
+modelos/*
+!dados/brutos/.gitkeep
+!dados/processados/.gitkeep
+# Listas de divisão treino/validação/teste são pequenas e garantem reprodutibilidade
+!dados/processados/*.csv
+!modelos/.gitkeep
+
+# Editores e sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
