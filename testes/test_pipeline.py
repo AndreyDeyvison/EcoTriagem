@@ -4,7 +4,7 @@ from PIL import Image
 from src.configuracao import ACOES, CLASSES, INTENCOES
 from src.decisao.regras import LIXEIRAS, NOMES, PREPARO, RECICLAVEL, decidir
 from src.integracao.contratos import ResultadoPLN, ResultadoVisao
-from src.integracao.pipeline import processar
+from src.integracao.pipeline import analisar_imagem, carregar_modelos, processar, responder_pergunta
 
 
 def _visao(classe="plastico", confianca=0.9):
@@ -21,6 +21,21 @@ def test_pipeline_devolve_contratos_validos():
     assert resultado.pln.intencao in INTENCOES
     assert resultado.decisao.acao in ACOES
     assert resultado.decisao.resposta
+
+
+def test_varias_perguntas_reaproveitam_a_mesma_analise_da_imagem():
+    visao = analisar_imagem(Image.new("RGBA", (300, 200)))
+    r1 = responder_pergunta(visao, "isso é reciclável?")
+    r2 = responder_pergunta(visao, "qual a cor da lixeira?")
+    assert r1.visao is r2.visao is visao
+    assert r1.pln.intencao == "e_reciclavel"
+    assert r2.pln.intencao == "cor_lixeira"
+
+
+def test_carregar_modelos_informa_cada_modulo():
+    status = carregar_modelos()
+    assert set(status) == {"Visão Computacional", "PLN"}
+    assert all(isinstance(v, bool) for v in status.values())
 
 
 @pytest.mark.parametrize("tabela", [NOMES, LIXEIRAS, RECICLAVEL, PREPARO])
