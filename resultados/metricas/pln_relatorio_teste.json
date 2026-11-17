@@ -1,0 +1,326 @@
+{
+  "gerado_em": "2026-11-17",
+  "modelo": "tfidf_palavras_caracteres_lr",
+  "descricao": "TF-IDF de palavras + caracteres e Regressão Logística",
+  "origem_do_teste": "divisão estratificada 80%/20% (seed 42)",
+  "frases_teste": 80,
+  "modelo_treinado": {
+    "acuracia": 0.875,
+    "f1_macro": 0.8765343765964885
+  },
+  "baseline_palavras_chave": {
+    "acuracia": 0.6625,
+    "f1_macro": 0.6885740342648689
+  },
+  "por_classe": [
+    {
+      "intencao": "identificar",
+      "precisao": 0.8462,
+      "revocacao": 0.9167,
+      "f1": 0.88,
+      "f1_baseline": 0.6667,
+      "suporte": 12
+    },
+    {
+      "intencao": "como_descartar",
+      "precisao": 0.6923,
+      "revocacao": 0.8182,
+      "f1": 0.75,
+      "f1_baseline": 0.7,
+      "suporte": 11
+    },
+    {
+      "intencao": "e_reciclavel",
+      "precisao": 1.0,
+      "revocacao": 0.8333,
+      "f1": 0.9091,
+      "f1_baseline": 0.8333,
+      "suporte": 12
+    },
+    {
+      "intencao": "cor_lixeira",
+      "precisao": 0.9167,
+      "revocacao": 1.0,
+      "f1": 0.9565,
+      "f1_baseline": 0.9,
+      "suporte": 11
+    },
+    {
+      "intencao": "como_preparar",
+      "precisao": 0.9,
+      "revocacao": 0.75,
+      "f1": 0.8182,
+      "f1_baseline": 0.5882,
+      "suporte": 12
+    },
+    {
+      "intencao": "ponto_coleta",
+      "precisao": 0.9091,
+      "revocacao": 0.8333,
+      "f1": 0.8696,
+      "f1_baseline": 0.6667,
+      "suporte": 12
+    },
+    {
+      "intencao": "fora_do_escopo",
+      "precisao": 0.9091,
+      "revocacao": 1.0,
+      "f1": 0.9524,
+      "f1_baseline": 0.4651,
+      "suporte": 10
+    }
+  ],
+  "erros": [
+    {
+      "texto": "como deixo isso seguro pra descartar?",
+      "esperado": "como_preparar",
+      "previsto": "como_descartar",
+      "confianca": 0.9478,
+      "acima_do_limiar": "sim"
+    },
+    {
+      "texto": "tenho que separar isso do resto?",
+      "esperado": "como_descartar",
+      "previsto": "como_preparar",
+      "confianca": 0.8276,
+      "acima_do_limiar": "sim"
+    },
+    {
+      "texto": "onde fica o local de descarte desse material?",
+      "esperado": "ponto_coleta",
+      "previsto": "como_descartar",
+      "confianca": 0.7782,
+      "acima_do_limiar": "sim"
+    },
+    {
+      "texto": "esse material é aproveitável?",
+      "esperado": "e_reciclavel",
+      "previsto": "identificar",
+      "confianca": 0.6779,
+      "acima_do_limiar": "sim"
+    },
+    {
+      "texto": "onde posso levar esse residuo?",
+      "esperado": "ponto_coleta",
+      "previsto": "como_descartar",
+      "confianca": 0.5137,
+      "acima_do_limiar": "sim"
+    },
+    {
+      "texto": "como deixo isso pronto pra reciclagem?",
+      "esperado": "como_preparar",
+      "previsto": "ponto_coleta",
+      "confianca": 0.4949,
+      "acima_do_limiar": "nao"
+    },
+    {
+      "texto": "qual destino certo desse material?",
+      "esperado": "como_descartar",
+      "previsto": "identificar",
+      "confianca": 0.4601,
+      "acima_do_limiar": "nao"
+    },
+    {
+      "texto": "isso pode voltar pra indústria?",
+      "esperado": "e_reciclavel",
+      "previsto": "como_descartar",
+      "confianca": 0.3855,
+      "acima_do_limiar": "nao"
+    },
+    {
+      "texto": "tem cuidado especial no manuseio?",
+      "esperado": "como_preparar",
+      "previsto": "fora_do_escopo",
+      "confianca": 0.3638,
+      "acima_do_limiar": "nao"
+    },
+    {
+      "texto": "esse pote é de vidro?",
+      "esperado": "identificar",
+      "previsto": "cor_lixeira",
+      "confianca": 0.3025,
+      "acima_do_limiar": "nao"
+    }
+  ],
+  "limiar": {
+    "adotado": 0.5,
+    "no_limiar_adotado": {
+      "limiar": 0.5,
+      "cobertura": 0.85,
+      "acuracia_aceitas": 0.9264705882352942,
+      "escopo_atendido": 0.8,
+      "fora_escopo_recusado": 1.0,
+      "acerto_sistema": 0.825
+    },
+    "maior_limiar_sem_perda": {
+      "limiar": 0.35,
+      "cobertura": 0.9625,
+      "acuracia_aceitas": 0.8831168831168831,
+      "escopo_atendido": 0.8571428571428571,
+      "fora_escopo_recusado": 1.0,
+      "acerto_sistema": 0.875
+    },
+    "varredura": [
+      {
+        "limiar": 0.0,
+        "cobertura": 1.0,
+        "acuracia_aceitas": 0.875,
+        "escopo_atendido": 0.8571428571428571,
+        "fora_escopo_recusado": 1.0,
+        "acerto_sistema": 0.875
+      },
+      {
+        "limiar": 0.05,
+        "cobertura": 1.0,
+        "acuracia_aceitas": 0.875,
+        "escopo_atendido": 0.8571428571428571,
+        "fora_escopo_recusado": 1.0,
+        "acerto_sistema": 0.875
+      },
+      {
+        "limiar": 0.1,
+        "cobertura": 1.0,
+        "acuracia_aceitas": 0.875,
+        "escopo_atendido": 0.8571428571428571,
+        "fora_escopo_recusado": 1.0,
+        "acerto_sistema": 0.875
+      },
+      {
+        "limiar": 0.15,
+        "cobertura": 1.0,
+        "acuracia_aceitas": 0.875,
+        "escopo_atendido": 0.8571428571428571,
+        "fora_escopo_recusado": 1.0,
+        "acerto_sistema": 0.875
+      },
+      {
+        "limiar": 0.2,
+        "cobertura": 1.0,
+        "acuracia_aceitas": 0.875,
+        "escopo_atendido": 0.8571428571428571,
+        "fora_escopo_recusado": 1.0,
+        "acerto_sistema": 0.875
+      },
+      {
+        "limiar": 0.25,
+        "cobertura": 0.9875,
+        "acuracia_aceitas": 0.8734177215189873,
+        "escopo_atendido": 0.8571428571428571,
+        "fora_escopo_recusado": 1.0,
+        "acerto_sistema": 0.875
+      },
+      {
+        "limiar": 0.3,
+        "cobertura": 0.9875,
+        "acuracia_aceitas": 0.8734177215189873,
+        "escopo_atendido": 0.8571428571428571,
+        "fora_escopo_recusado": 1.0,
+        "acerto_sistema": 0.875
+      },
+      {
+        "limiar": 0.35,
+        "cobertura": 0.9625,
+        "acuracia_aceitas": 0.8831168831168831,
+        "escopo_atendido": 0.8571428571428571,
+        "fora_escopo_recusado": 1.0,
+        "acerto_sistema": 0.875
+      },
+      {
+        "limiar": 0.4,
+        "cobertura": 0.9125,
+        "acuracia_aceitas": 0.9041095890410958,
+        "escopo_atendido": 0.8285714285714286,
+        "fora_escopo_recusado": 1.0,
+        "acerto_sistema": 0.85
+      },
+      {
+        "limiar": 0.45,
+        "cobertura": 0.8875,
+        "acuracia_aceitas": 0.9014084507042254,
+        "escopo_atendido": 0.8,
+        "fora_escopo_recusado": 1.0,
+        "acerto_sistema": 0.825
+      },
+      {
+        "limiar": 0.5,
+        "cobertura": 0.85,
+        "acuracia_aceitas": 0.9264705882352942,
+        "escopo_atendido": 0.8,
+        "fora_escopo_recusado": 1.0,
+        "acerto_sistema": 0.825
+      },
+      {
+        "limiar": 0.55,
+        "cobertura": 0.8125,
+        "acuracia_aceitas": 0.9384615384615385,
+        "escopo_atendido": 0.7857142857142857,
+        "fora_escopo_recusado": 1.0,
+        "acerto_sistema": 0.8125
+      },
+      {
+        "limiar": 0.6,
+        "cobertura": 0.7625,
+        "acuracia_aceitas": 0.9344262295081968,
+        "escopo_atendido": 0.7571428571428571,
+        "fora_escopo_recusado": 1.0,
+        "acerto_sistema": 0.7875
+      },
+      {
+        "limiar": 0.65,
+        "cobertura": 0.7375,
+        "acuracia_aceitas": 0.9322033898305084,
+        "escopo_atendido": 0.7285714285714285,
+        "fora_escopo_recusado": 1.0,
+        "acerto_sistema": 0.7625
+      },
+      {
+        "limiar": 0.7,
+        "cobertura": 0.7,
+        "acuracia_aceitas": 0.9464285714285714,
+        "escopo_atendido": 0.7142857142857143,
+        "fora_escopo_recusado": 1.0,
+        "acerto_sistema": 0.75
+      },
+      {
+        "limiar": 0.75,
+        "cobertura": 0.6625,
+        "acuracia_aceitas": 0.9433962264150944,
+        "escopo_atendido": 0.6714285714285714,
+        "fora_escopo_recusado": 1.0,
+        "acerto_sistema": 0.7125
+      },
+      {
+        "limiar": 0.8,
+        "cobertura": 0.625,
+        "acuracia_aceitas": 0.96,
+        "escopo_atendido": 0.6571428571428571,
+        "fora_escopo_recusado": 1.0,
+        "acerto_sistema": 0.7
+      },
+      {
+        "limiar": 0.85,
+        "cobertura": 0.55,
+        "acuracia_aceitas": 0.9772727272727273,
+        "escopo_atendido": 0.5857142857142857,
+        "fora_escopo_recusado": 1.0,
+        "acerto_sistema": 0.6375
+      },
+      {
+        "limiar": 0.9,
+        "cobertura": 0.4375,
+        "acuracia_aceitas": 0.9714285714285714,
+        "escopo_atendido": 0.45714285714285713,
+        "fora_escopo_recusado": 1.0,
+        "acerto_sistema": 0.525
+      },
+      {
+        "limiar": 0.95,
+        "cobertura": 0.275,
+        "acuracia_aceitas": 1.0,
+        "escopo_atendido": 0.3,
+        "fora_escopo_recusado": 1.0,
+        "acerto_sistema": 0.3875
+      }
+    ]
+  }
+}

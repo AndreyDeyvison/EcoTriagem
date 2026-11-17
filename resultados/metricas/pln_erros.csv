@@ -1,0 +1,11 @@
+texto,esperado,previsto,confianca,acima_do_limiar
+como deixo isso seguro pra descartar?,como_preparar,como_descartar,0.9478,sim
+tenho que separar isso do resto?,como_descartar,como_preparar,0.8276,sim
+onde fica o local de descarte desse material?,ponto_coleta,como_descartar,0.7782,sim
+esse material é aproveitável?,e_reciclavel,identificar,0.6779,sim
+onde posso levar esse residuo?,ponto_coleta,como_descartar,0.5137,sim
+como deixo isso pronto pra reciclagem?,como_preparar,ponto_coleta,0.4949,nao
+qual destino certo desse material?,como_descartar,identificar,0.4601,nao
+isso pode voltar pra indústria?,e_reciclavel,como_descartar,0.3855,nao
+tem cuidado especial no manuseio?,como_preparar,fora_do_escopo,0.3638,nao
+esse pote é de vidro?,identificar,cor_lixeira,0.3025,nao

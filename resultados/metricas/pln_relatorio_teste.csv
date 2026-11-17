@@ -1,0 +1,8 @@
+intencao,precisao,revocacao,f1,f1_baseline,suporte
+identificar,0.8462,0.9167,0.88,0.6667,12
+como_descartar,0.6923,0.8182,0.75,0.7,11
+e_reciclavel,1.0,0.8333,0.9091,0.8333,12
+cor_lixeira,0.9167,1.0,0.9565,0.9,11
+como_preparar,0.9,0.75,0.8182,0.5882,12
+ponto_coleta,0.9091,0.8333,0.8696,0.6667,12
+fora_do_escopo,0.9091,1.0,0.9524,0.4651,10

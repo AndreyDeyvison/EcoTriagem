@@ -1,0 +1,8 @@
+modelo,descricao,f1_macro,f1_macro_desvio,acuracia,tipo
+tfidf_palavras_caracteres_lr,TF-IDF de palavras + caracteres e Regressão Logística,0.9002740389494038,0.02198654399210971,0.8995535714285714,candidato
+tfidf_palavras_caracteres_svc,TF-IDF de palavras + caracteres e LinearSVC calibrado,0.8970826988308673,0.03294687948146973,0.8964781746031747,candidato
+tfidf_caracteres_lr,TF-IDF de caracteres (3-5) + Regressão Logística,0.890455340030749,0.02909956091701544,0.8901289682539681,candidato
+tfidf_palavras_lr,TF-IDF de palavras (1-2) + Regressão Logística,0.8408620891615142,0.03646334109561727,0.8433035714285714,candidato
+ablacao_sem_negacoes,Ablação: TF-IDF de palavras sem stopwords e sem negações,0.8099675064533823,0.06342625896063503,0.811954365079365,ablacao
+ablacao_sem_stopwords,Ablação: TF-IDF de palavras sem stopwords (negações preservadas),0.8097842625018942,0.05726999827249442,0.811954365079365,ablacao
+baseline_palavras_chave,Baseline: casamento de palavras-chave (versão anterior do stub),0.6729045193847505,0.03918101763539732,0.667906746031746,baseline
