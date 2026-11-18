@@ -1,0 +1,85 @@
+{
+  "gerado_em": "2026-11-17",
+  "fonte": "dados/processados/divisao_trashnet.csv",
+  "total_de_imagens": 2521,
+  "imagens_por_conjunto": {
+    "treino": 1764,
+    "validacao": 378,
+    "teste": 379
+  },
+  "distribuicao": [
+    {
+      "classe": "lixo",
+      "treino": 95,
+      "validacao": 21,
+      "teste": 21,
+      "total": 137,
+      "percentual_do_dataset": 5.43
+    },
+    {
+      "classe": "metal",
+      "treino": 287,
+      "validacao": 61,
+      "teste": 61,
+      "total": 409,
+      "percentual_do_dataset": 16.22
+    },
+    {
+      "classe": "papel",
+      "treino": 416,
+      "validacao": 89,
+      "teste": 89,
+      "total": 594,
+      "percentual_do_dataset": 23.56
+    },
+    {
+      "classe": "papelao",
+      "treino": 282,
+      "validacao": 60,
+      "teste": 61,
+      "total": 403,
+      "percentual_do_dataset": 15.99
+    },
+    {
+      "classe": "plastico",
+      "treino": 336,
+      "validacao": 72,
+      "teste": 72,
+      "total": 480,
+      "percentual_do_dataset": 19.04
+    },
+    {
+      "classe": "vidro",
+      "treino": 348,
+      "validacao": 75,
+      "teste": 75,
+      "total": 498,
+      "percentual_do_dataset": 19.75
+    }
+  ],
+  "desbalanceamento": {
+    "classe_minoritaria": "lixo",
+    "imagens_da_minoritaria": 137,
+    "classe_majoritaria": "papel",
+    "imagens_da_majoritaria": 594,
+    "razao": 4.34
+  },
+  "imagens": {
+    "dimensoes": {
+      "512x384": 2521
+    },
+    "modos_de_cor": {
+      "RGB": 2521
+    },
+    "largura": {
+      "minima": 512,
+      "maxima": 512,
+      "media": 512.0
+    },
+    "altura": {
+      "minima": 384,
+      "maxima": 384,
+      "media": 384.0
+    }
+  }
+}

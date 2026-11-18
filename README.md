@@ -184,12 +184,14 @@ virtual ativado.
 
 ```bash
 python -m src.machine_learning.baixar_dados   # baixa o TrashNet (~43 MB) e confere o SHA-256
+python -m src.machine_learning.treinar        # treina o classificador de imagens (~5 min)
 python -m src.pln.treinar                     # treina o classificador de intenções
 python app.py                                 # abre a interface em http://127.0.0.1:7860
 ```
 
 A interface funciona sem o primeiro passo (as fotos de exemplo já estão no repositório).
-Sem o segundo, o PLN usa o baseline de palavras-chave e avisa no console.
+Sem os treinos, cada módulo avisa no console e usa seu substituto provisório: a visão
+devolve um resultado fixo e o PLN usa o baseline de palavras-chave.
 
 ### Dados de imagem
 
@@ -238,9 +240,17 @@ python -m src.integracao.avaliar_sistema    # avaliação de ponta a ponta (exig
 
 ### Visão Computacional
 
-Em desenvolvimento. O classificador será treinado sobre a divisão em
-`dados/processados/divisao_trashnet.csv` e salvo em `modelos/visao_trashnet.pt`.
-Enquanto o arquivo não existir, o sistema continua funcionando com o resultado fixo.
+```bash
+python -m src.machine_learning.analise_exploratoria  # distribuição das classes
+python -m src.machine_learning.treinar_baseline      # baseline clássico (HSV + HOG e SVM)
+python -m src.machine_learning.treinar               # MobileNetV2 em duas fases
+python -m src.machine_learning.avaliar               # métricas finais no conjunto de teste
+```
+
+O treino lê a divisão de `dados/processados/divisao_trashnet.csv` e salva o modelo em
+`modelos/classificador_residuos.pt`, fora do git. Enquanto o arquivo não existir, o
+sistema continua funcionando com o resultado fixo e avisa no console. Detalhes em
+[`src/visao_computacional/README.md`](src/visao_computacional/README.md).
 
 ## Modelos e métodos
 
@@ -257,9 +267,15 @@ Enquanto o arquivo não existir, o sistema continua funcionando com o resultado 
 - **Normalização na inferência:** correção da orientação EXIF (fotos de celular),
   composição de imagens com transparência sobre fundo branco (o fundo do TrashNet),
   conversão para RGB e limite de 1024 px no maior lado.
-- **Classificador:** em desenvolvimento. A abordagem prevista é transfer learning de
-  uma rede convolucional pré-treinada no ImageNet, com F1-macro na validação como
-  critério de escolha.
+- **Baseline clássico:** histograma HSV (16 bins de matiz, 8 de saturação, 8 de valor)
+  concatenado com HOG (células de 16×16, 9 orientações), 608 características, e SVM com
+  núcleo RBF e `class_weight="balanced"`. Serve para medir o quanto a rede acrescenta.
+- **Classificador:** MobileNetV2 pré-treinada no ImageNet, ajustada em duas fases —
+  primeiro só a cabeça classificadora (backbone congelado, 6 épocas), depois ajuste fino
+  dos blocos finais (12 épocas, taxa 10× menor e agendador cosseno). Aumento de dados
+  apenas no treino; pesos inversamente proporcionais à frequência da classe na entropia
+  cruzada, por causa do desbalanceamento. O melhor modelo é escolhido pelo **F1-macro na
+  validação**, não pela acurácia, que numa base desbalanceada premia as classes grandes.
 
 ### PLN — classificação de intenções
 
@@ -428,11 +444,33 @@ levam poucos microssegundos neste mapa.
 
 ![Exemplo de rota encontrada pelo A*](resultados/graficos/mapa_rota_exemplo.png)
 
-### Visão Computacional e sistema completo
+### Visão Computacional
 
-**Pendentes.** Dependem do classificador de imagens, que está em desenvolvimento. O
-script de avaliação de ponta a ponta já está pronto. Os resultados com a visão
-provisória não são publicados, porque não representam o sistema.
+Conjunto de teste de 379 imagens, usado uma única vez, depois de o modelo já estar
+escolhido pelo F1-macro na validação.
+
+| Modelo | Acurácia | F1-macro |
+|---|---|---|
+| Baseline clássico (HSV + HOG e SVM RBF) | 0,710 | 0,699 |
+| **MobileNetV2 (transferência de aprendizado)** | **0,894** | **0,881** |
+
+O ganho de 18 pontos não é uniforme: onde a cor já separa as classes (papel, papelão) o
+baseline vai bem e a rede acrescenta ~9 pontos de F1; onde a cor engana (plástico, vidro
+e metal, todos claros ou reflexivos) a rede ganha de 25 a 33 pontos. A classe `lixo`
+continua sendo a pior (F1 0,766), mesmo com os pesos na função de perda.
+
+![Matriz de confusão da visão](resultados/graficos/matriz_confusao_visao.png)
+
+A varredura do limiar confirma o 0,6 adotado: o sistema aceita 91,6% das fotos e acerta
+93,4% das aceitas, contra 89,4% sem limiar nenhum
+([`analise_limiar_visao.csv`](resultados/metricas/analise_limiar_visao.csv)).
+
+### Sistema completo
+
+**Pendente.** O script de avaliação de ponta a ponta já está pronto
+(`src.integracao.avaliar_sistema`) e agora roda com os dois modelos reais; falta
+executá-lo e publicar os números. A avaliação com fotos tiradas pela equipe
+(`dados/fotos_equipe/`) também está implementada e aguarda as fotos.
 
 ## Limitações e trabalhos futuros
 
