@@ -8,7 +8,7 @@ from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parents[1]
 
-# Modelos treinados ficam aqui (fora do git; gerados pelos scripts de treino).
+# Modelos treinados ficam aqui (versionados; regeneráveis pelos scripts de treino).
 PASTA_MODELOS = RAIZ / "modelos"
 
 # Classes de resíduo reconhecidas pela Visão Computacional (base: TrashNet).

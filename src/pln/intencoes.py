@@ -8,9 +8,9 @@ O modelo é carregado **uma única vez**, na primeira chamada, e fica em cache
 no módulo — carregar o arquivo a cada pergunta custaria mais que a própria
 classificação.
 
-Enquanto `modelos/pln_intencoes.joblib` não existir (quem clona o repositório
-não recebe a pasta `modelos/`), o módulo cai no baseline de palavras-chave e
-avisa uma vez no console, em vez de quebrar o sistema. Use
+O modelo vem versionado no repositório. Se mesmo assim `modelos/pln_intencoes.joblib`
+não existir, o módulo cai no baseline de palavras-chave e avisa uma vez no console,
+em vez de quebrar o sistema. Use
 `modelo_carregado()` para a interface mostrar esse estado ao usuário.
 """
 

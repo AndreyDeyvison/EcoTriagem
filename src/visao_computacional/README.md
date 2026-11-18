@@ -22,9 +22,11 @@ python -m src.machine_learning.avaliar               # métricas finais no teste
 pytest testes/test_visao.py
 ```
 
-`treinar.py` precisa rodar antes de `avaliar.py`. O dataset e os modelos são
-ignorados pelo git: quem clona precisa baixar e treinar. Até lá a classificação
-usa um stub e avisa no console, sem quebrar o sistema.
+`treinar.py` precisa rodar antes de `avaliar.py`. O modelo treinado já vem no
+repositório, então **não é preciso treinar para usar o sistema** — treinar só é
+necessário para reproduzir os números ou mudar o modelo. O dataset continua fora do
+git (46 MB): `baixar_dados` o traz. Sem o modelo, a classificação usa um stub e avisa
+no console, sem quebrar o sistema.
 
 ## Arquivos
 

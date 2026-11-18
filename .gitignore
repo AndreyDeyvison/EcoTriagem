@@ -24,6 +24,13 @@ modelos/*
 # Listas de divisão treino/validação/teste são pequenas e garantem reprodutibilidade
 !dados/processados/*.csv
 !modelos/.gitkeep
+# Modelos treinados versionados por decisão da equipe: quem clona roda o sistema
+# sem precisar treinar (treinar a CNN leva ~5 min numa máquina com acelerador e
+# bem mais numa sem). Só os dois que a aplicação carrega; o baseline clássico
+# continua fora, porque nada no sistema o usa — suas métricas já estão em
+# resultados/metricas/metricas_baseline_visao.json.
+!modelos/classificador_residuos.pt
+!modelos/pln_intencoes.joblib
 
 # Editores e sistema
 .vscode/

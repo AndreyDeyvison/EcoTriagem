@@ -19,9 +19,10 @@ python -m src.pln.avaliar    # mede no teste e gera métricas, gráficos e exemp
 pytest testes/test_pln.py
 ```
 
-`treinar.py` precisa rodar antes de `avaliar.py`. Quem clona o repositório não
-recebe a pasta `modelos/` (ela é ignorada pelo git): até treinar, o sistema
-continua funcionando com o baseline de palavras-chave e avisa no console.
+`treinar.py` precisa rodar antes de `avaliar.py`. O modelo treinado já vem no
+repositório, então treinar só é necessário para reproduzir os números ou mudar o
+modelo. Sem o arquivo, o sistema continua funcionando com o baseline de
+palavras-chave e avisa no console.
 
 ## Arquivos
 

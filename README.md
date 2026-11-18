@@ -125,7 +125,7 @@ src/
 │   ├── pln/                   # Dataset de intenções (399 frases)
 │   ├── avaliacao/             # Perguntas de teste da avaliação de ponta a ponta
 │   └── mapa/                  # Mapa simulado de Maceió e pontos de coleta fictícios
-├── modelos/                   # Modelos treinados (fora do git; gerados pelos scripts)
+├── modelos/                   # Modelos treinados (versionados; regeneráveis pelos scripts)
 ├── resultados/
 │   ├── metricas/              # Métricas em JSON/CSV
 │   ├── graficos/              # Figuras para o artigo
@@ -193,6 +193,35 @@ A interface funciona sem o primeiro passo (as fotos de exemplo já estão no rep
 Sem os treinos, cada módulo avisa no console e usa seu substituto provisório: a visão
 devolve um resultado fixo e o PLN usa o baseline de palavras-chave.
 
+### Modelos treinados (já incluídos)
+
+Os dois modelos que a aplicação carrega vêm versionados no repositório, para quem só
+quer rodar o sistema não precisar treinar:
+
+| Arquivo | Tamanho | Treinado por |
+|---|---|---|
+| `modelos/classificador_residuos.pt` | 9,1 MB | `python -m src.machine_learning.treinar` |
+| `modelos/pln_intencoes.joblib` | 204 KB | `python -m src.pln.treinar` |
+
+```bash
+python -m pip install -r requirements.txt
+python app.py        # já funciona com os dois modelos reais
+```
+
+Os dois scripts de treino regeneram exatamente estes arquivos (seed 42 em tudo), então
+versioná-los é conveniência, não dependência.
+
+**Compatibilidade.** O `.pt` guarda apenas os pesos (`state_dict`) e é carregado com
+`weights_only=True`, então funciona em qualquer versão recente do PyTorch. Já o
+`.joblib` do PLN é um objeto do scikit-learn serializado: se a sua versão do
+scikit-learn for muito diferente da que gerou o arquivo, o carregamento pode avisar ou
+falhar. Nesse caso, rode `python -m src.pln.treinar` (leva segundos) para regerá-lo.
+
+O baseline clássico de visão (`baseline_visao.joblib`, 8,8 MB) **não** é versionado:
+nada no sistema o carrega, ele existe só para a comparação do artigo, e suas métricas já
+estão em [`resultados/metricas/metricas_baseline_visao.json`](resultados/metricas/metricas_baseline_visao.json).
+Para regerá-lo: `python -m src.machine_learning.treinar_baseline`.
+
 ### Dados de imagem
 
 ```bash
@@ -210,9 +239,10 @@ python -m src.pln.treinar    # compara os modelos e salva o melhor em modelos/
 python -m src.pln.avaliar    # gera métricas, gráficos e exemplos em resultados/
 ```
 
-O modelo treinado não vai para o repositório: rode `src.pln.treinar` uma vez
-depois de clonar. Antes disso o sistema funciona com um baseline de
-palavras-chave e avisa no console. Detalhes em [`src/pln/README.md`](src/pln/README.md).
+O modelo treinado já vem no repositório (`modelos/pln_intencoes.joblib`), então não
+é preciso treinar para usar o sistema. Rodar `src.pln.treinar` regenera o mesmo
+modelo (seed fixa). Sem o arquivo, o PLN cai no baseline de palavras-chave e avisa
+no console. Detalhes em [`src/pln/README.md`](src/pln/README.md).
 
 ### Interface web (demonstração)
 
@@ -248,8 +278,9 @@ python -m src.machine_learning.avaliar               # métricas finais no conju
 ```
 
 O treino lê a divisão de `dados/processados/divisao_trashnet.csv` e salva o modelo em
-`modelos/classificador_residuos.pt`, fora do git. Enquanto o arquivo não existir, o
-sistema continua funcionando com o resultado fixo e avisa no console. Detalhes em
+`modelos/classificador_residuos.pt`, que **já vem versionado no repositório** — não é
+preciso treinar para usar o sistema. Enquanto o arquivo não existir, o sistema continua
+funcionando com o resultado fixo e avisa no console. Detalhes em
 [`src/visao_computacional/README.md`](src/visao_computacional/README.md).
 
 ## Modelos e métodos

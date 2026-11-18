@@ -1,8 +1,9 @@
 """Testes do módulo de Visão Computacional & ML.
 
 Os testes que dependem do modelo treinado ou das imagens do TrashNet são
-pulados quando eles não estão em disco: `modelos/` e `dados/brutos/` são
-ignorados pelo git, e quem clona o repositório não os recebe.
+pulados quando eles não estão em disco. O modelo vem versionado, mas as imagens
+do TrashNet não (46 MB): quem clona precisa rodar `baixar_dados` para os testes
+que leem o dataset.
 """
 
 import numpy as np
