@@ -9,10 +9,9 @@ seletiva, preparo antes do descarte e rota até o ponto de coleta mais próximo.
 
 Projeto Integrador Final da disciplina de Inteligência Artificial — AFYA / UNIMA Maceió.
 
-> **Situação atual:** PLN, decisão, busca, integração e interface estão implementados e
-> avaliados. O **classificador de imagens ainda está em desenvolvimento**: até ele ficar
-> pronto, o módulo de visão devolve sempre o mesmo resultado (plástico, 87%) e a
-> interface exibe um aviso de *modo de demonstração*.
+> **Situação atual:** todos os módulos (Visão, PLN, decisão, busca, integração e
+> interface) estão implementados e avaliados individualmente. Falta publicar a avaliação
+> de ponta a ponta do sistema completo e a avaliação com fotos reais tiradas pela equipe.
 
 ## Integrantes
 
@@ -56,9 +55,9 @@ e de uma pergunta em linguagem natural:
 ## Tecnologias
 
 - **Linguagem:** Python 3.13.5
-- **Visão computacional:** Pillow (normalização das imagens: orientação EXIF,
-  transparência, conversão para RGB e redimensionamento). O classificador de
-  imagens está em desenvolvimento.
+- **Visão computacional:** PyTorch e torchvision (MobileNetV2 pré-treinada no
+  ImageNet, ajustada ao TrashNet) e Pillow (normalização das imagens: orientação EXIF,
+  transparência, conversão para RGB e redimensionamento).
 - **Processamento de linguagem natural (PLN):** scikit-learn [4], com TF-IDF [5] de
   palavras e de n-gramas de caracteres e Regressão Logística; pré-processamento
   próprio (normalização, tokenização e stopwords com as negações preservadas).
@@ -102,7 +101,7 @@ src/
 ├── configuracao.py       # Classes, intenções e limiares usados por todos os módulos
 ├── visao_computacional/  # Classificação do resíduo a partir da imagem
 ├── pln/                  # Dataset, treino, avaliação e inferência do classificador de intenções
-├── machine_learning/     # Download e divisão do dataset de imagens (treino do classificador: em desenvolvimento)
+├── machine_learning/     # Dataset de imagens, baseline clássico, treino e avaliação da MobileNetV2
 ├── decisao/              # Agente de regras, busca A* e mapa simulado
 └── integracao/           # Contratos, pipeline, normalização de imagens, avaliação de ponta a ponta
 ```
@@ -125,7 +124,7 @@ src/
 │   ├── pln/                   # Dataset de intenções (399 frases)
 │   ├── avaliacao/             # Perguntas de teste da avaliação de ponta a ponta
 │   └── mapa/                  # Mapa simulado de Maceió e pontos de coleta fictícios
-├── modelos/                   # Modelos treinados (fora do git; gerados pelos scripts)
+├── modelos/                   # Modelos treinados (versionados; regeneráveis pelos scripts)
 ├── resultados/
 │   ├── metricas/              # Métricas em JSON/CSV
 │   ├── graficos/              # Figuras para o artigo
@@ -189,9 +188,13 @@ python -m src.pln.treinar                     # treina o classificador de inten�
 python app.py                                 # abre a interface em http://127.0.0.1:7860
 ```
 
-A interface funciona sem o primeiro passo (as fotos de exemplo já estão no repositório).
-Sem os treinos, cada módulo avisa no console e usa seu substituto provisório: a visão
-devolve um resultado fixo e o PLN usa o baseline de palavras-chave.
+Os modelos treinados já estão no repositório, em `modelos/` (classificador de imagens,
+cerca de 9 MB, e classificador de intenções), então **a interface roda direto com
+`python app.py`**, sem treinar nada. Os comandos de treino acima regeneram os modelos a
+partir dos dados. O download do TrashNet só é necessário para treinar e para os
+experimentos; as fotos de exemplo da interface já estão no repositório. Se um modelo
+for apagado, o módulo avisa no console e usa um substituto provisório: a visão devolve
+um resultado fixo e o PLN usa o baseline de palavras-chave.
 
 ### Dados de imagem
 
@@ -210,9 +213,9 @@ python -m src.pln.treinar    # compara os modelos e salva o melhor em modelos/
 python -m src.pln.avaliar    # gera métricas, gráficos e exemplos em resultados/
 ```
 
-O modelo treinado não vai para o repositório: rode `src.pln.treinar` uma vez
-depois de clonar. Antes disso o sistema funciona com um baseline de
-palavras-chave e avisa no console. Detalhes em [`src/pln/README.md`](src/pln/README.md).
+O modelo treinado está versionado em `modelos/pln_intencoes.joblib`; o treino o
+regenera com os mesmos resultados (seed fixa). Detalhes em
+[`src/pln/README.md`](src/pln/README.md).
 
 ### Interface web (demonstração)
 
@@ -248,8 +251,8 @@ python -m src.machine_learning.avaliar               # métricas finais no conju
 ```
 
 O treino lê a divisão de `dados/processados/divisao_trashnet.csv` e salva o modelo em
-`modelos/classificador_residuos.pt`, fora do git. Enquanto o arquivo não existir, o
-sistema continua funcionando com o resultado fixo e avisa no console. Detalhes em
+`modelos/classificador_residuos.pt` (versionado). Sem o arquivo, o sistema continua
+funcionando com um resultado fixo e avisa no console. Detalhes em
 [`src/visao_computacional/README.md`](src/visao_computacional/README.md).
 
 ## Modelos e métodos
@@ -476,8 +479,8 @@ executá-lo e publicar os números. A avaliação com fotos tiradas pela equipe
 
 **Limitações**
 
-- O classificador de imagens ainda não foi treinado. Os resultados de Visão e do
-  sistema completo estão pendentes.
+- A avaliação de ponta a ponta do sistema completo e a avaliação com fotos reais
+  ainda não foram publicadas.
 - O TrashNet tem fotos com fundo branco e um objeto por imagem. Espera-se queda de
   desempenho em fotos reais, com fundo e iluminação variados.
 - O sistema reconhece só 6 classes de material. Orgânicos, pilhas, eletrônicos e
@@ -491,7 +494,7 @@ executá-lo e publicar os números. A avaliação com fotos tiradas pela equipe
 
 **Trabalhos futuros**
 
-- Treinar e avaliar o classificador de imagens e publicar a avaliação de ponta a ponta.
+- Publicar a avaliação de ponta a ponta do sistema completo.
 - Avaliar o modelo de visão em fotos reais tiradas pela equipe.
 - Usar o objeto extraído pelo PLN (`objetos.py`) nas regras de decisão para os casos
   de descarte especial.
