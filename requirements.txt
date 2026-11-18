@@ -1,6 +1,9 @@
 gradio>=6.0,<7
 pillow>=11
+numpy>=2.0
 scikit-learn>=1.5
 joblib>=1.4
 matplotlib>=3.9
+torch>=2.4
+torchvision>=0.19
 pytest>=8

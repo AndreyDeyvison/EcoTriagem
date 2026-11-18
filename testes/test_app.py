@@ -1,6 +1,20 @@
 from PIL import Image
 
 import app
+from src.integracao.contratos import ResultadoVisao
+
+
+def _visao_confiante(classe: str = "plastico") -> ResultadoVisao:
+    """Resultado de visão fixo e acima do limiar.
+
+    Os testes abaixo verificam o que a interface faz com a decisão, não o que o
+    modelo de visão prevê. Uma imagem sintética em branco produz confiança
+    baixa no modelo treinado (e alta no stub), o que faria o teste passar ou
+    falhar conforme a máquina tivesse ou não o modelo em disco.
+    """
+    return ResultadoVisao(
+        classe=classe, confianca=0.95, top3=[(classe, 0.95), ("vidro", 0.03), ("metal", 0.02)]
+    )
 
 
 def test_foto_inicia_conversa_com_material_identificado():
@@ -48,7 +62,8 @@ def test_registrar_salva_cada_pergunta(tmp_path, monkeypatch):
 
 def test_mapa_aparece_so_quando_ha_rota():
     foto = Image.new("RGB", (64, 64))
-    visao, conversa, _, _ = app.ao_receber_imagem(foto)
+    _, conversa, _, _ = app.ao_receber_imagem(foto)
+    visao = _visao_confiante()
     _, conversa, etapas, mapa = app.ao_perguntar("onde fica o ecoponto mais perto?", conversa, visao, foto, "Centro")
     assert mapa.visible is True and mapa.value is not None
     assert "4. Busca" in etapas

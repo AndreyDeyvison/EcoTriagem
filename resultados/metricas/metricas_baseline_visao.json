@@ -1,0 +1,110 @@
+{
+  "gerado_em": "2026-11-17",
+  "modelo": "SVM RBF sobre histograma HSV + HOG",
+  "seed": 42,
+  "n_caracteristicas": 608,
+  "busca_de_C": [
+    {
+      "C": 1.0,
+      "f1_macro_validacao": 0.6172
+    },
+    {
+      "C": 10.0,
+      "f1_macro_validacao": 0.6372
+    },
+    {
+      "C": 100.0,
+      "f1_macro_validacao": 0.6372
+    }
+  ],
+  "C_escolhido": 10.0,
+  "imagens": {
+    "treino": 1764,
+    "validacao": 378,
+    "teste": 379
+  },
+  "validacao": {
+    "acuracia": 0.6481481481481481,
+    "f1_macro": 0.635027648648746,
+    "por_classe": {
+      "lixo": {
+        "precisao": 0.7692,
+        "revocacao": 0.4762,
+        "f1": 0.5882,
+        "suporte": 21
+      },
+      "metal": {
+        "precisao": 0.5962,
+        "revocacao": 0.5082,
+        "f1": 0.5487,
+        "suporte": 61
+      },
+      "papel": {
+        "precisao": 0.6893,
+        "revocacao": 0.7978,
+        "f1": 0.7396,
+        "suporte": 89
+      },
+      "papelao": {
+        "precisao": 0.75,
+        "revocacao": 0.8,
+        "f1": 0.7742,
+        "suporte": 60
+      },
+      "plastico": {
+        "precisao": 0.5797,
+        "revocacao": 0.5556,
+        "f1": 0.5674,
+        "suporte": 72
+      },
+      "vidro": {
+        "precisao": 0.5844,
+        "revocacao": 0.6,
+        "f1": 0.5921,
+        "suporte": 75
+      }
+    }
+  },
+  "teste": {
+    "acuracia": 0.7097625329815304,
+    "f1_macro": 0.6992733445400661,
+    "por_classe": {
+      "lixo": {
+        "precisao": 0.8571,
+        "revocacao": 0.5714,
+        "f1": 0.6857,
+        "suporte": 21
+      },
+      "metal": {
+        "precisao": 0.6364,
+        "revocacao": 0.5738,
+        "f1": 0.6034,
+        "suporte": 61
+      },
+      "papel": {
+        "precisao": 0.7642,
+        "revocacao": 0.9101,
+        "f1": 0.8308,
+        "suporte": 89
+      },
+      "papelao": {
+        "precisao": 0.8413,
+        "revocacao": 0.8689,
+        "f1": 0.8548,
+        "suporte": 61
+      },
+      "plastico": {
+        "precisao": 0.6212,
+        "revocacao": 0.5694,
+        "f1": 0.5942,
+        "suporte": 72
+      },
+      "vidro": {
+        "precisao": 0.6267,
+        "revocacao": 0.6267,
+        "f1": 0.6267,
+        "suporte": 75
+      }
+    }
+  }
+}
