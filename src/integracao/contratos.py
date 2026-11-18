@@ -52,6 +52,18 @@ class ResultadoPLN:
 
 
 @dataclass(frozen=True)
+class RotaColeta:
+    """Saída da busca do ponto de coleta (src/decisao/busca.py)."""
+
+    ponto: str              # nome do ponto de coleta
+    bairro_destino: str
+    caminho: list[str]      # bairros, da origem ao destino
+    distancia_km: float
+    nos_expandidos: int     # esforço da busca, para comparar algoritmos
+    algoritmo: str          # "a_estrela", "gulosa", "largura" ou "custo_uniforme"
+
+
+@dataclass(frozen=True)
 class Decisao:
     """Saída do módulo de decisão: o que o sistema responde ao usuário."""
 
@@ -59,6 +71,7 @@ class Decisao:
     acao: str                 # uma de ACOES
     lixeira: str | None = None  # "<cor> (<material>)", ex.: "vermelha (plástico)"; None quando não se aplica
     regra: str = ""           # regra que gerou a decisão (ex.: "R2"; ver src/decisao/REGRAS.md)
+    rota: RotaColeta | None = None  # preenchida quando a pergunta é sobre ponto de coleta
 
     def __post_init__(self) -> None:
         if self.acao not in ACOES:

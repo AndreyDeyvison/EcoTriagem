@@ -1,0 +1,52 @@
+{
+  "mapa": "dados/mapa/maceio_simulado.json (simulado)",
+  "n_bairros": 26,
+  "n_ruas": 46,
+  "n_pontos_coleta": 6,
+  "materiais": [
+    "papel",
+    "papelao",
+    "plastico",
+    "vidro",
+    "metal"
+  ],
+  "n_consultas": 130,
+  "algoritmos": {
+    "largura": {
+      "nome": "Busca em largura (BFS)",
+      "rotas_otimas_pct": 83.08,
+      "excesso_medio_pct": 2.64,
+      "excesso_max_pct": 36.31,
+      "custo_medio_km": 2.767,
+      "nos_expandidos_medio": 4.65,
+      "tempo_medio_us": 2.07
+    },
+    "custo_uniforme": {
+      "nome": "Custo uniforme",
+      "rotas_otimas_pct": 100.0,
+      "excesso_medio_pct": 0.0,
+      "excesso_max_pct": 0.0,
+      "custo_medio_km": 2.668,
+      "nos_expandidos_medio": 4.33,
+      "tempo_medio_us": 3.46
+    },
+    "gulosa": {
+      "nome": "Busca gulosa",
+      "rotas_otimas_pct": 86.15,
+      "excesso_medio_pct": 2.17,
+      "excesso_max_pct": 28.39,
+      "custo_medio_km": 2.752,
+      "nos_expandidos_medio": 2.21,
+      "tempo_medio_us": 13.71
+    },
+    "a_estrela": {
+      "nome": "A*",
+      "rotas_otimas_pct": 100.0,
+      "excesso_medio_pct": 0.0,
+      "excesso_max_pct": 0.0,
+      "custo_medio_km": 2.668,
+      "nos_expandidos_medio": 2.42,
+      "tempo_medio_us": 15.01
+    }
+  }
+}

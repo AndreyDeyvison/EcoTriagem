@@ -18,21 +18,21 @@ def test_remover_foto_limpa_a_tela():
 
 
 def test_pergunta_sem_foto_pede_a_foto():
-    _, conversa, _ = app.ao_perguntar("isso é reciclável?", [], None)
+    _, conversa, _, _ = app.ao_perguntar("isso é reciclável?", [], None)
     assert conversa[-1]["content"] == "Envie uma foto do resíduo primeiro."
 
 
 def test_conversa_acumula_perguntas_e_respostas():
     visao, conversa, _, _ = app.ao_receber_imagem(Image.new("RGB", (64, 64)))
-    caixa, conversa, etapas = app.ao_perguntar("isso é reciclável?", conversa, visao)
-    caixa, conversa, etapas = app.ao_perguntar("qual a cor da lixeira?", conversa, visao)
+    caixa, conversa, etapas, _ = app.ao_perguntar("isso é reciclável?", conversa, visao)
+    caixa, conversa, etapas, _ = app.ao_perguntar("qual a cor da lixeira?", conversa, visao)
     assert caixa == ""
     assert [m["role"] for m in conversa] == ["assistant", "user", "assistant", "user", "assistant"]
     assert "cor_lixeira" in etapas
 
 
 def test_pergunta_vazia_e_ignorada():
-    _, conversa, _ = app.ao_perguntar("   ", [], None)
+    _, conversa, _, _ = app.ao_perguntar("   ", [], None)
     assert conversa == []
 
 
@@ -44,3 +44,14 @@ def test_registrar_salva_cada_pergunta(tmp_path, monkeypatch):
     app.ao_perguntar("isso é reciclável?", conversa, visao, foto)
     assert (tmp_path / "exemplo_001.jpg").exists()
     assert (tmp_path / "exemplos.jsonl").exists()
+
+
+def test_mapa_aparece_so_quando_ha_rota():
+    foto = Image.new("RGB", (64, 64))
+    visao, conversa, _, _ = app.ao_receber_imagem(foto)
+    _, conversa, etapas, mapa = app.ao_perguntar("onde fica o ecoponto mais perto?", conversa, visao, foto, "Centro")
+    assert mapa.visible is True and mapa.value is not None
+    assert "4. Busca" in etapas
+    _, conversa, etapas, mapa = app.ao_perguntar("isso é reciclável?", conversa, visao, foto, "Centro")
+    assert mapa.visible is False
+    assert "4. Busca" not in etapas

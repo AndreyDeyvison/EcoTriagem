@@ -166,19 +166,21 @@ def decidir(visao: ResultadoVisao, pln: ResultadoPLN) -> Decisao
 3. **Casos especiais:** papel engordurado, vidro quebrado, embalagens multicamada (tipo longa vida),
    resíduos que o modelo não conhece (pilhas, eletrônicos) — em parceria com o Andrey, se ele
    implementar a extração do objeto citado.
-4. **Busca do ponto de coleta** (intenção `ponto_coleta`, hoje com um `TODO` no código):
+4. ✅ **Busca do ponto de coleta** (intenção `ponto_coleta`). *Feito:* `src/decisao/busca.py` (A\*, gulosa,
+   BFS, custo uniforme), mapa simulado em `dados/mapa/`, comparação em
+   `python -m src.decisao.comparar_buscas`, bairro e mapa da rota na interface. Plano original:
    - montar um grafo de Maceió (bairros ou pontos de referência como nós, distâncias como arestas)
      com ecopontos/pontos de entrega. Pode ser simulado ou, se acharem, com endereços reais de
      ecopontos (citar a fonte);
    - implementar **A\*** com heurística de distância em linha reta;
    - comparar com BFS e busca gulosa: custo do caminho, nós expandidos e tempo → tabela para o artigo;
    - considerar o tipo de resíduo (nem todo ponto aceita tudo).
-5. **Combinar com o Frederico o contrato da busca**. Sugestão:
+5. ✅ **Combinar com o Frederico o contrato da busca** (*feito:* `RotaColeta` em `contratos.py`). Sugestão:
    ```python
    def buscar_ponto_coleta(origem: str, classe: str) -> RotaColeta
    # RotaColeta(destino="Ecoponto X", caminho=["Farol", "Pinheiro", ...], distancia_km=3.2, nos_expandidos=7)
    ```
-6. **Testes** para as regras novas e para a busca (casos com caminho conhecido).
+6. ✅ **Testes** para as regras novas e para a busca (`testes/test_decisao.py`, `testes/test_busca.py`).
 
 ### Entregáveis
 - `src/decisao/regras.py` expandido e `src/decisao/busca.py` (A\*, BFS, gulosa).

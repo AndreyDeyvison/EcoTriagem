@@ -14,6 +14,8 @@ import argparse
 import gradio as gr
 
 from src.configuracao import LIMIAR_CONFIANCA_VISAO, RAIZ
+from src.decisao.busca import NOMES_ALGORITMOS
+from src.decisao.mapa import carregar_mapa, desenhar_mapa
 from src.decisao.regras import NOMES
 from src.integracao.contratos import ResultadoPipeline, ResultadoVisao
 from src.integracao.pipeline import analisar_imagem, carregar_modelos, responder_pergunta
@@ -65,6 +67,12 @@ def _tabela_etapas(visao: ResultadoVisao, resultado: ResultadoPipeline | None = 
             f"| 2. PLN (intenção) | `{resultado.pln.intencao}` | {resultado.pln.confianca:.0%} |",
             f"| 3. Decisão | {saida_decisao} | — |",
         ]
+        rota = decisao.rota
+        if rota is not None:
+            linhas.append(
+                f"| 4. Busca {NOMES_ALGORITMOS[rota.algoritmo]} | {' → '.join(rota.caminho)} "
+                f"({rota.distancia_km:.1f} km) | {rota.nos_expandidos} nós expandidos |"
+            )
     return "\n".join(linhas)
 
 
@@ -86,22 +94,31 @@ def ao_receber_imagem(imagem):
     return visao, conversa, _probabilidades(visao), _tabela_etapas(visao)
 
 
-def ao_perguntar(pergunta, conversa, visao, imagem=None):
-    """Responde a uma pergunta sobre a foto já analisada."""
+def ao_perguntar(pergunta, conversa, visao, imagem=None, bairro=None):
+    """Responde a uma pergunta sobre a foto já analisada.
+
+    Devolve (caixa de texto, conversa, painel de etapas, mapa da rota).
+    """
     pergunta = (pergunta or "").strip()
     if not pergunta:
-        return "", conversa, gr.skip()
+        return "", conversa, gr.skip(), gr.skip()
 
     conversa = conversa + [{"role": "user", "content": pergunta}]
     if visao is None:
         conversa.append({"role": "assistant", "content": "Envie uma foto do resíduo primeiro."})
-        return "", conversa, gr.skip()
+        return "", conversa, gr.skip(), gr.skip()
 
-    resultado = responder_pergunta(visao, pergunta)
+    resultado = responder_pergunta(visao, pergunta, origem=bairro or None)
     conversa.append({"role": "assistant", "content": resultado.decisao.resposta})
     if registrar_interacoes and imagem is not None:
-        salvar_exemplo(PASTA_REGISTRO, imagem, resultado)
-    return "", conversa, _tabela_etapas(visao, resultado)
+        salvar_exemplo(PASTA_REGISTRO, imagem, resultado, extras={"bairro": bairro})
+
+    rota = resultado.decisao.rota
+    if rota is None:
+        mapa = gr.Plot(visible=False)
+    else:
+        mapa = gr.Plot(value=desenhar_mapa(rota, f"Rota até {rota.ponto}"), visible=True)
+    return "", conversa, _tabela_etapas(visao, resultado), mapa
 
 
 with gr.Blocks(title="EcoTriagem") as demo:
@@ -128,6 +145,12 @@ with gr.Blocks(title="EcoTriagem") as demo:
             if EXEMPLOS_IMAGEM:
                 gr.Examples(EXEMPLOS_IMAGEM, inputs=imagem, label="Fotos de exemplo (conjunto de teste)")
             material = gr.Label(label="Material identificado", num_top_classes=3)
+            bairro = gr.Dropdown(
+                choices=carregar_mapa().bairros,
+                value=None,
+                label="Seu bairro (mapa simulado de Maceió)",
+                info="Usado quando você pergunta pelo ponto de coleta mais próximo.",
+            )
 
         with gr.Column(scale=3):
             conversa = gr.Chatbot(label="Conversa", height=360, placeholder="Envie uma foto para começar.")
@@ -141,13 +164,14 @@ with gr.Blocks(title="EcoTriagem") as demo:
             gr.Examples(EXEMPLOS_PERGUNTA, inputs=pergunta, label="Perguntas de exemplo")
             with gr.Accordion("Como o sistema chegou à resposta", open=True):
                 etapas = gr.Markdown(ETAPAS_VAZIAS)
+            mapa_rota = gr.Plot(label="Rota até o ponto de coleta (mapa simulado, pontos fictícios)", visible=False)
 
     imagem.change(ao_receber_imagem, inputs=imagem, outputs=[visao_atual, conversa, material, etapas])
     for evento in (enviar.click, pergunta.submit):
         evento(
             ao_perguntar,
-            inputs=[pergunta, conversa, visao_atual, imagem],
-            outputs=[pergunta, conversa, etapas],
+            inputs=[pergunta, conversa, visao_atual, imagem, bairro],
+            outputs=[pergunta, conversa, etapas, mapa_rota],
         )
 
 

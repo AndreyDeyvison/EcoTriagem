@@ -34,9 +34,10 @@ def analisar_imagem(imagem: Image.Image) -> ResultadoVisao:
     return classificador.classificar_imagem(preparar_imagem(imagem))
 
 
-def responder_pergunta(visao: ResultadoVisao, pergunta: str) -> ResultadoPipeline:
+def responder_pergunta(visao: ResultadoVisao, pergunta: str, origem: str | None = None) -> ResultadoPipeline:
+    """origem: bairro do usuário, usado quando a pergunta é sobre ponto de coleta."""
     resultado_pln = intencoes.interpretar_pergunta(pergunta)
-    decisao = decidir(visao, resultado_pln)
+    decisao = decidir(visao, resultado_pln, origem)
     return ResultadoPipeline(visao=visao, pln=resultado_pln, decisao=decisao)
 
 

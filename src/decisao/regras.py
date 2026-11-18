@@ -18,7 +18,8 @@ Cores das lixeiras segundo a Resolução CONAMA nº 275/2001.
 from collections import defaultdict
 
 from src.configuracao import LIMIAR_CONFIANCA_PLN, LIMIAR_CONFIANCA_VISAO
-from src.integracao.contratos import Decisao, ResultadoPLN, ResultadoVisao
+from src.decisao.busca import buscar_ponto_coleta
+from src.integracao.contratos import Decisao, ResultadoPLN, ResultadoVisao, RotaColeta
 
 NOMES = {
     "papel": "papel",
@@ -122,15 +123,40 @@ def _responder(intencao: str, materiais: list[str], confianca: float) -> str:
             if ambiguo:
                 return " ".join(f"Se for {NOMES[m]}: {PREPARO[m]}" for m in materiais)
             return PREPARO[materiais[0]]
-        case "ponto_coleta":
-            # TODO(Caio): buscar o ponto de coleta mais próximo (A*), ver PLANO_DE_TRABALHO.md.
-            return f"A busca do ponto de coleta ainda não foi implementada. Por enquanto, use a lixeira {rotulo}."
         case _:
             raise ValueError(f"intenção sem regra: {intencao!r}")
 
 
-def decidir(visao: ResultadoVisao, pln: ResultadoPLN) -> Decisao:
-    """Combina o que foi visto na imagem com o que foi perguntado."""
+def _responder_ponto_coleta(materiais: list[str], origem: str | None) -> tuple[str, RotaColeta | None]:
+    """Resposta para a intenção ponto_coleta: busca A* no mapa simulado."""
+    nome = _juntar([NOMES[m] for m in materiais])
+    rotulo = f"{LIXEIRAS[materiais[0]]} ({nome})"
+    if "lixo" in materiais:
+        return "Rejeito não vai para ponto de coleta: descarte no lixo comum (lixeira cinza).", None
+    if origem is None:
+        return (
+            f"Escolha seu bairro no campo \"Seu bairro\" para eu indicar o ponto de coleta mais próximo. "
+            f"Enquanto isso, use a lixeira {rotulo}.",
+            None,
+        )
+    rota = buscar_ponto_coleta(origem, materiais)
+    if rota is None:
+        return f"Não encontrei no mapa um ponto de coleta que aceite {nome}. Use a lixeira {rotulo}.", None
+    if len(rota.caminho) == 1:
+        return f"Há um ponto de coleta que aceita {nome} no seu bairro: {rota.ponto}.", rota
+    trajeto = " → ".join(rota.caminho)
+    return (
+        f"O ponto de coleta mais próximo que aceita {nome} é o {rota.ponto}, "
+        f"a cerca de {rota.distancia_km:.1f} km ({trajeto}).",
+        rota,
+    )
+
+
+def decidir(visao: ResultadoVisao, pln: ResultadoPLN, origem: str | None = None) -> Decisao:
+    """Combina o que foi visto na imagem com o que foi perguntado.
+
+    origem: bairro do usuário, usado só na intenção ponto_coleta.
+    """
     # R1
     if pln.intencao == "fora_do_escopo" or pln.confianca < LIMIAR_CONFIANCA_PLN:
         return Decisao(
@@ -147,11 +173,16 @@ def decidir(visao: ResultadoVisao, pln: ResultadoPLN) -> Decisao:
     if candidatos is not None:
         regra, materiais, confianca = candidatos
         nome = _juntar([NOMES[m] for m in materiais])
+        if pln.intencao == "ponto_coleta":
+            resposta, rota = _responder_ponto_coleta(materiais, origem)
+        else:
+            resposta, rota = _responder(pln.intencao, materiais, confianca), None
         return Decisao(
-            resposta=_responder(pln.intencao, materiais, confianca),
+            resposta=resposta,
             acao="responder",
             lixeira=f"{LIXEIRAS[materiais[0]]} ({nome})",
             regra=regra,
+            rota=rota,
         )
 
     # R4

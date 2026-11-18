@@ -48,6 +48,9 @@ PASTA_GRAFICOS = RAIZ / "resultados" / "graficos"
 PASTA_EXEMPLOS = RAIZ / "resultados" / "exemplos" / "avaliacao"
 EXEMPLOS_POR_DESFECHO = 3
 
+# Bairro de origem usado nas perguntas sobre ponto de coleta (a resposta inclui a lixeira).
+ORIGEM_AVALIACAO = "Centro"
+
 DESFECHOS = {
     "correto": "Correto",
     "nova_foto": "Pediu nova foto",
@@ -144,7 +147,7 @@ def avaliar() -> tuple[dict, dict[str, list]]:
 
         for (texto, intencao_esperada), resultado_pln in zip(perguntas, resultados_pln):
             inicio = perf_counter()
-            decisao = decidir(visao, resultado_pln)
+            decisao = decidir(visao, resultado_pln, ORIGEM_AVALIACAO)
             tempos_decisao.append((perf_counter() - inicio) * 1000)
 
             resultado = ResultadoPipeline(visao=visao, pln=resultado_pln, decisao=decisao)

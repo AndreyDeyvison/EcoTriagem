@@ -61,7 +61,7 @@ que o modelo de visão permite.
 | `e_reciclavel` | Sim/não, com a lixeira |
 | `cor_lixeira` | Cor da lixeira |
 | `como_preparar` | Dica de preparo (em R3: uma dica por material candidato) |
-| `ponto_coleta` | *A implementar*: busca A\* do ponto de coleta mais próximo |
+| `ponto_coleta` | Rota até o ponto de coleta mais próximo que aceita o material (busca A\*, seção 5) |
 
 Cores (CONAMA 275/2001): azul = papel/papelão; vermelha = plástico;
 verde = vidro; amarela = metal; cinza = rejeito não reciclável.
@@ -74,10 +74,48 @@ interface e é contabilizada em `python -m src.integracao.avaliar_sistema`
 acerto quando aplicada — em especial, quanto a R3 evita pedidos de nova foto
 sem introduzir erros.
 
-## 5. Pendências
+## 5. Busca do ponto de coleta
+
+Quando a intenção é `ponto_coleta`, o agente resolve um problema de busca
+num grafo (`src/decisao/busca.py`, mapa em `dados/mapa/maceio_simulado.json`):
+
+| Elemento | Definição |
+|---|---|
+| Estados | 26 bairros de Maceió (coordenadas **aproximadas**) |
+| Estado inicial | Bairro informado pelo usuário na interface |
+| Ações / custo | Ir a um bairro vizinho (46 ligações); custo = distância em linha reta × fator de tortuosidade ≥ 1 (km) |
+| Objetivo | Qualquer bairro com ponto de coleta que aceite o(s) material(is) (6 pontos **fictícios**) |
+| Heurística | h(n) = menor distância em linha reta (haversine) de n até um bairro objetivo |
+
+A heurística é **admissível** e **consistente**: como cada aresta custa a
+distância em linha reta multiplicada por um fator ≥ 1, e a distância em linha
+reta obedece à desigualdade triangular, h nunca superestima o custo restante.
+Por isso o A\* é ótimo. As duas propriedades são verificadas em
+`testes/test_busca.py` para todos os bairros e materiais.
+
+**Comparação** (`python -m src.decisao.comparar_buscas`; 130 consultas =
+26 origens × 5 materiais recicláveis; referência de ótimo = custo uniforme):
+
+| Algoritmo | Rotas ótimas | Excesso médio | Excesso máximo | Nós expandidos (média) |
+|---|---|---|---|---|
+| Busca em largura (BFS) | 83.1% | 2.6% | 36.3% | 4.7 |
+| Custo uniforme | 100.0% | 0.0% | 0.0% | 4.3 |
+| Busca gulosa | 86.2% | 2.2% | 28.4% | 2.2 |
+| A* | 100.0% | 0.0% | 0.0% | 2.4 |
+
+O A\* encontra sempre a rota de menor distância expandindo cerca de metade dos
+nós do custo uniforme. A busca gulosa expande ainda menos, mas não garante a
+menor rota. A BFS minimiza o número de ligações, não a distância. Os tempos
+ficam em microssegundos para todos (mapa pequeno) e estão no JSON de resultados.
+Gráficos: `resultados/graficos/comparacao_buscas_*.png` e `mapa_rota_exemplo.png`.
+
+**Limitação:** o mapa é simulado. Para uso real, trocar
+`dados/mapa/maceio_simulado.json` por dados de ruas e pontos de coleta oficiais
+(o código não muda).
+
+## 6. Pendências
 
 - Textos de preparo: conferir com fonte oficial (prefeitura ou guia de
   coleta seletiva) e citar.
 - Casos especiais: papel engordurado, vidro quebrado, longa vida, pilhas e
   eletrônicos (depende do PLN extrair o objeto citado).
-- Busca do ponto de coleta (A\*, comparado com BFS e busca gulosa).
