@@ -1,29 +1,29 @@
 texto,intencao
-o que é isso?,identificar
-que material é esse?,identificar
-consegue identificar esse objeto?,identificar
-qual material é esse aqui,identificar
+esse objeto é de que material?,identificar
+tu sabe o que é esse treco?,identificar
+reconhece o item da foto?,identificar
+esse negócio aqui é o quê?,identificar
 me diz o que é isso na foto,identificar
-isso é feito de quê?,identificar
+o que seria isso que eu fotografei?,identificar
 sabe dizer que coisa é essa?,identificar
 identifica pra mim por favor,identificar
 onde eu descarto isso?,como_descartar
-onde jogo isso fora?,como_descartar
+"quero me livrar disso, onde ponho?",como_descartar
 como descartar esse objeto?,como_descartar
 posso jogar no lixo comum?,como_descartar
 onde coloco isso depois de usar?,como_descartar
 em qual lixo eu ponho isso?,como_descartar
 o que eu faço com isso agora?,como_descartar
 vai pra onde isso aqui,como_descartar
-isso é reciclável?,e_reciclavel
-dá pra reciclar?,e_reciclavel
+esse item pode ser reciclado?,e_reciclavel
+a reciclagem aceita esse material?,e_reciclavel
 esse material recicla?,e_reciclavel
 pode ir pra reciclagem?,e_reciclavel
-isso tem reciclagem?,e_reciclavel
-é reciclavel ou nao,e_reciclavel
+isso aí se recicla?,e_reciclavel
+serve pra reciclagem ou não serve,e_reciclavel
 vale a pena separar pra reciclar?,e_reciclavel
 reciclam isso aqui na cidade?,e_reciclavel
-qual a cor da lixeira?,cor_lixeira
+a lixeira dele é de qual cor?,cor_lixeira
 qual cor de lixeira eu uso?,cor_lixeira
 vai na lixeira de que cor?,cor_lixeira
 é a lixeira azul ou vermelha?,cor_lixeira
@@ -31,7 +31,7 @@ qual a lixeira certa pra isso,cor_lixeira
 em qual cor de coletor coloco?,cor_lixeira
 que cor é o lixo disso,cor_lixeira
 me fala a cor do recipiente certo,cor_lixeira
-preciso lavar antes?,como_preparar
+tem que dar uma lavada antes?,como_preparar
 tenho que limpar antes de descartar?,como_preparar
 como preparar isso pra reciclagem?,como_preparar
 devo amassar antes?,como_preparar
@@ -39,7 +39,7 @@ precisa tirar o rótulo?,como_preparar
 tem algum cuidado antes de jogar fora?,como_preparar
 lavo ou jogo assim mesmo?,como_preparar
 preciso enxaguar?,como_preparar
-onde fica o ecoponto mais perto?,ponto_coleta
+existe ecoponto no meu bairro?,ponto_coleta
 tem ponto de coleta aqui perto?,ponto_coleta
 onde entrego isso pra reciclar?,ponto_coleta
 qual o ponto de entrega mais próximo?,ponto_coleta
@@ -47,11 +47,11 @@ onde levo isso na cidade?,ponto_coleta
 tem algum lugar que recebe esse material?,ponto_coleta
 qual o local de coleta mais próximo de mim?,ponto_coleta
 onde fica a cooperativa de reciclagem?,ponto_coleta
-bom dia,fora_do_escopo
-quanto é 2 mais 2?,fora_do_escopo
+"boa noite, tudo certo?",fora_do_escopo
+em que ano o brasil foi descoberto,fora_do_escopo
 qual a previsão do tempo hoje?,fora_do_escopo
-me conta uma piada,fora_do_escopo
+recomenda um filme pra hoje,fora_do_escopo
 quem ganhou o jogo ontem?,fora_do_escopo
-obrigado,fora_do_escopo
+valeu pela ajuda,fora_do_escopo
 asdfgh,fora_do_escopo
 qual o horário do ônibus?,fora_do_escopo

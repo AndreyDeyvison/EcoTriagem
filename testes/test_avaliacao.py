@@ -56,3 +56,24 @@ def test_salvar_exemplo_grava_imagem_e_registro(tmp_path):
     assert primeiro["imagem"] == "exemplo_001.jpg"
     assert primeiro["decisao"]["lixeira"] == "verde (vidro)"
     assert primeiro["desfecho"] == "correto"
+
+
+def test_perguntas_de_avaliacao_nao_aparecem_no_dataset_do_pln():
+    """Se uma pergunta da avaliação estiver no treino do PLN, a avaliação mede memorização."""
+    import csv
+    import re
+    import unicodedata
+
+    from src.configuracao import RAIZ
+
+    def palavras(texto):
+        sem_acento = unicodedata.normalize("NFKD", texto).encode("ascii", "ignore").decode().lower()
+        return frozenset(re.findall(r"\w+", sem_acento))
+
+    arquivo_pln = RAIZ / "dados" / "pln" / "intencoes.csv"
+    if not arquivo_pln.exists():
+        pytest.skip("dataset do PLN ausente")
+    with arquivo_pln.open(encoding="utf-8") as f:
+        treino = {palavras(linha["texto"]) for linha in csv.DictReader(f)}
+    repetidas = [texto for texto, _ in carregar_perguntas() if palavras(texto) in treino]
+    assert not repetidas, f"perguntas da avaliação presentes no dataset do PLN: {repetidas}"
